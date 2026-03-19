@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleppy's place</title>
+    <style>
+        body {
+            background-color: #383636; 
+            color: #ffffff;
+            font-family: ui-monospace, 'Cascadia Code', monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 60px 0;
+        }
+
+        .container {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            margin-bottom: 60px;
+            text-align: center; 
+        }
+
+        h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        .education { color: #a0a0a0; font-size: 0.9rem; display: block; margin: 8px 0 40px 0; }
+        .separator { border-top: 1px solid #4a4848; width: 100%; margin-bottom: 60px; }
+
+        /* ZMIANA: Proporcja 2.5 do 1 przesuwa prawą kolumnę o ok. 25% w prawo */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr; 
+            align-items: start;
+            row-gap: 80px;
+        }
+
+        .left-col {
+            text-align: left;
+            padding-left: 120px; /* Twój szeroki lewy margines */
+            padding-right: 40px;
+        }
+
+        /* Kontener prawej strony - teraz jest węższy i przesunięty w prawo */
+        .right-col-wrapper {
+            display: flex;
+            justify-content: flex-start; /* Wyrównuje do lewej krawędzi swojej (przesuniętej) kolumny */
+            width: 100%;
+        }
+
+        .content-align-box {
+            text-align: left; 
+            min-width: 250px;
+        }
+
+        .avatar-container {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #4a4848;
+            margin-bottom: 20px;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name { font-size: 1.4rem; font-weight: bold; display: block; }
+        .profile-handle { color: #888; font-size: 0.9rem; display: block; }
+
+        h2 {
+            font-size: 0.8rem;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .item {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #3d3b3b;
+            padding-bottom: 25px;
+        }
+
+        code { background-color: #4a4848; padding: 2px 6px; border-radius: 4px; }
+        a { color: #ffffff; text-decoration: none; border-bottom: 1px solid #666; }
+        a:hover { color: #a0a0a0; border-bottom-color: #ffffff; }
+
+        .contact-list { list-style: none; padding: 0; margin: 0; }
+        .contact-list li { margin-bottom: 20px; }
+        .item-meta { color: #888888; font-size: 0.75rem; display: block; margin-bottom: 4px; }
+
+        @media (max-width: 1000px) {
+            .grid-layout { grid-template-columns: 1fr; }
+            .left-col { padding-left: 40px; padding-right: 40px; text-align: center; }
+            .right-col-wrapper { justify-content: center; padding-right: 0; margin-top: 40px; }
+            .content-align-box { text-align: center; }
+            .avatar-container { margin: 0 auto 20px auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Sleppy's place</h1>
+            <span class="education">Electronics and stuff</span>
+            <div class="separator"></div>
+        </header>
+
+        <div class="grid-layout">
+            
+            <div class="left-col">
+                <h2>Bio</h2>
+                <p>Hi everyone! I'm <strong>Olaf</strong>, for most of you online known as <code>Sleppy</code>. I'm currently an <i>electronics student</i> specializing on working with single board computers such as raspberry pi or orange pi. I can do anything you wish for with them, from setting a simple pi hole to creating and configuring a whole consoles emulator. I also have a lot of experience with linux stuff (I use arch btw.) which I daily drive on my home PC.</p>
+                <br>   <p>While I'm not neck deep into contemplating about my existence (aka. my pi crushes again and again) you can find me:</p> 
+                <p>- Making a random project on kicad</p>
+                <p>- Learning how to code (I'll give up in less than a month again)</p>
+                <p>- Being a 24/7 PC tech assistant for my friends (u can find us <a href="https://discord.gg/Mb5hJB32R" target="_blank">here</a>)</p>
+            </div>
+
+            <div class="right-col-wrapper">
+                <div class="content-align-box">
+                    <div class="avatar-container">
+                        <img src="pfp.png" alt="Sleppy Avatar">
+                    </div>
+                    <div class="profile-name">Sleppy</div>
+                    <div class="profile-handle">Sleppy-af</div>
+                </div>
+            </div>
+
+            <div class="left-col">
+                <h2>Projects</h2>
+                <div class="item">
+                    <span class="item-meta">18/03/2026</span>
+                    <span style="font-size: 1.2rem;"><a href="https://github.com/Sleppy-af/Modded-Minecraft-server-on-single-board-computer" target="_blank">Modded minecraft server on single board computer</a></span>
+                    <p style="font-size: 0.95rem; color: #b0b0b0; margin-top: 10px;">A quick, step by step tutorial how to set up a working, multiplayer minecraft server on our beloved single board computer.</p>
+                </div>
+            </div>
+
+            <div class="right-col-wrapper">
+                <div class="content-align-box">
+                    <h2>You can find me here</h2>
+                    <ul class="contact-list">
+                        <li>
+                            <span class="item-meta">Discord</span> 
+                            <p>kidnap3d_</p>
+                        </li>
+                        <li>
+                            <span class="item-meta">Github</span> 
+                            <p><a href="https://github.com/Sleppy-af" target="_blank">github.com/Sleppy-af</a></p>
+                        </li>
+                        <li>
+                            <span class="item-meta">Bluesky</span>
+                            <p>kidnap3d.bsky.social</p> 
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
