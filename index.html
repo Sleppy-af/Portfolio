@@ -5,6 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleppy's place</title>
     <style>
+        /* --- ENTRY OVERLAY --- */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #383636;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            cursor: pointer;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+        }
+
+        #overlay-text {
+            font-family: ui-monospace, 'Cascadia Code', monospace;
+            color: #888;
+            font-size: 0.9rem;
+            letter-spacing: 0.3rem;
+            text-transform: uppercase;
+            animation: pulse 2.5s infinite;
+            user-select: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        #main-content {
+            filter: blur(20px);
+            transform: scale(0.98);
+            transition: filter 1.2s ease, transform 1.2s ease;
+        }
+
+        .overlay-hidden { opacity: 0 !important; visibility: hidden !important; }
+        .content-visible { filter: blur(0) !important; transform: scale(1) !important; }
+
+        /* --- BAZA --- */
         body {
             background-color: #383636; 
             color: #ffffff;
@@ -12,82 +54,104 @@
             line-height: 1.6;
             margin: 0;
             padding: 60px 0;
+            overflow-x: hidden;
         }
 
-        .container {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        header {
-            margin-bottom: 60px;
-            text-align: center; 
-        }
-
+        .container { width: 100%; margin: 0; padding: 0; box-sizing: border-box; }
+        header { margin-bottom: 60px; text-align: center; }
         h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
         .education { color: #a0a0a0; font-size: 0.9rem; display: block; margin: 8px 0 40px 0; }
         .separator { border-top: 1px solid #4a4848; width: 100%; margin-bottom: 60px; }
 
-        /* ZMIANA: Proporcja 2.5 do 1 przesuwa prawą kolumnę o ok. 25% w prawo */
         .grid-layout {
             display: grid;
-            grid-template-columns: 2.5fr 1fr; 
+            grid-template-columns: 2.5fr 1.5fr; /* Nieco szersza prawa kolumna dla dłuższego paska */
             align-items: start;
             row-gap: 80px;
         }
 
-        .left-col {
-            text-align: left;
-            padding-left: 120px; /* Twój szeroki lewy margines */
-            padding-right: 40px;
-        }
-
-        /* Kontener prawej strony - teraz jest węższy i przesunięty w prawo */
-        .right-col-wrapper {
-            display: flex;
-            justify-content: flex-start; /* Wyrównuje do lewej krawędzi swojej (przesuniętej) kolumny */
-            width: 100%;
-        }
-
-        .content-align-box {
-            text-align: left; 
-            min-width: 250px;
-        }
+        .left-col { text-align: left; padding-left: 120px; padding-right: 40px; }
+        .right-col-wrapper { display: flex; justify-content: flex-start; width: 100%; padding-right: 60px; }
+        .content-align-box { text-align: left; width: 100%; max-width: 400px; }
 
         .avatar-container {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid #4a4848;
-            margin-bottom: 20px;
+            width: 180px; height: 180px; border-radius: 50%;
+            overflow: hidden; border: 3px solid #4a4848; margin-bottom: 20px;
         }
-
-        .avatar-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
 
         .profile-name { font-size: 1.4rem; font-weight: bold; display: block; }
         .profile-handle { color: #888; font-size: 0.9rem; display: block; }
 
-        h2 {
-            font-size: 0.8rem;
-            color: #888888;
+        /* --- STYLOWY ODTWARZACZ --- */
+        .audio-player {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #4a4848;
+        }
+
+        .track-meta {
+            font-size: 0.75rem;
+            color: #fff;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .artist-title {
+            color: #888;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 25px;
+            letter-spacing: 1px;
         }
 
-        .item {
-            margin-bottom: 40px;
-            border-bottom: 1px solid #3d3b3b;
-            padding-bottom: 25px;
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
+        #play-btn {
+            background: none;
+            border: 1px solid #666;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 5px 15px;
+            font-size: 0.7rem;
+            min-width: 70px;
+            transition: all 0.2s;
+        }
+        #play-btn:hover { background: #4a4848; }
+
+        .timer {
+            font-size: 0.7rem;
+            color: #888;
+            min-width: 80px;
+        }
+
+        /* Suwak */
+        #seek-slider {
+            flex-grow: 1;
+            height: 2px;
+            background: #4a4848;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            transition: height 0.2s;
+        }
+        #seek-slider:hover { height: 4px; }
+        #seek-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        h2 { font-size: 0.8rem; color: #888888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
+        .item { margin-bottom: 40px; border-bottom: 1px solid #3d3b3b; padding-bottom: 25px; }
         code { background-color: #4a4848; padding: 2px 6px; border-radius: 4px; }
         a { color: #ffffff; text-decoration: none; border-bottom: 1px solid #666; }
         a:hover { color: #a0a0a0; border-bottom-color: #ffffff; }
@@ -100,77 +164,143 @@
             .grid-layout { grid-template-columns: 1fr; }
             .left-col { padding-left: 40px; padding-right: 40px; text-align: center; }
             .right-col-wrapper { justify-content: center; padding-right: 0; margin-top: 40px; }
-            .content-align-box { text-align: center; }
+            .content-align-box { text-align: center; max-width: 90%; }
             .avatar-container { margin: 0 auto 20px auto; }
+            .track-meta { justify-content: center; gap: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>Sleppy's place</h1>
-            <span class="education">Electronics and stuff</span>
-            <div class="separator"></div>
-        </header>
+    <div id="overlay">
+        <div id="overlay-text">[ click to enter ]</div>
+    </div>
 
-        <div class="grid-layout">
-            
-            <div class="left-col">
-                <h2>Bio</h2>
-                <p>Hi everyone! I'm <strong>Olaf</strong>, for most of you online known as <code>Sleppy</code>. I'm currently an <i>electronics student</i> specializing on working with single board computers such as raspberry pi or orange pi. I can do anything you wish for with them, from setting a simple pi hole to creating and configuring a whole consoles emulator. I also have a lot of experience with linux stuff (I use arch btw.) which I daily drive on my home PC.</p>
-                <br>   <p>While I'm not neck deep into contemplating about my existence (aka. my pi crushes again and again) you can find me:</p> 
-                <p>- Making a random project on kicad</p>
-                <p>- Learning how to code (I'll give up in less than a month again)</p>
-                <p>- Being a 24/7 PC tech assistant for my friends (u can find us <a href="https://discord.gg/Mb5hJB32R" target="_blank">here</a>)</p>
-            </div>
+    <div id="main-content">
+        <div class="container">
+            <header>
+                <h1>Sleppy's place</h1>
+                <span class="education">Electronics and stuff</span>
+                <div class="separator"></div>
+            </header>
 
-            <div class="right-col-wrapper">
-                <div class="content-align-box">
-                    <div class="avatar-container">
-                        <img src="gitpfp.jpg" alt="Sleppy Avatar">
+            <div class="grid-layout">
+                
+                <div class="left-col">
+                    <h2>Bio</h2>
+                    <p>Hi everyone! I'm <strong>Olaf</strong>, for most of you online known as <code>Sleppy</code>. I'm currently an <i>electronics student</i> specializing on working with single board computers such as raspberry pi or orange pi. I can do anything you wish for with them, from setting a simple pi hole to creating and configuring a whole consoles emulator. I also have a lot of experience with linux stuff (I use arch btw.) which I daily drive on my home PC.</p> 
+                    <p>While I'm not neck deep into contemplating about my existence (aka. my pi crushes again and again) you can find me:</p> 
+                    <p>- Making a random project on kicad</p>
+                    <p>- Learning how to code (I'll give up in less than a month again)</p>
+                    <p>- Being a 24/7 PC tech assistant for my friends (u can find us <a href="https://discord.gg/Mb5hJB32R" target="_blank">here</a>)</p>
+                </div>
+
+                <div class="right-col-wrapper">
+                    <div class="content-align-box">
+                        <div class="avatar-container">
+                            <img src="gitpfp.jpg" alt="Sleppy Avatar">
+                        </div>
+                        <div class="profile-name">Sleppy</div>
+                        <div class="profile-handle">Sleppy-af</div>
+
+                        <div class="audio-player">
+                            <audio id="bg-music" loop preload="auto">
+                                <source src="music.mp3" type="audio/mpeg">
+                            </audio>
+                            
+                            <div class="track-meta">
+                                <div class="artist-title">Chase Atlantic — Church</div>
+                                <div class="timer"><span id="current-time">0:00</span> / <span id="duration">0:00</span></div>
+                            </div>
+
+                            <div class="player-controls">
+                                <button id="play-btn">PLAY</button>
+                                <input type="range" id="seek-slider" value="0" max="100">
+                            </div>
+                        </div>
                     </div>
-                    <div class="profile-name">Sleppy</div>
-                    <div class="profile-handle">Sleppy-af</div>
                 </div>
-            </div>
 
-            <div class="left-col">
-                <h2>Projects</h2>
-                <div class="item">
-                    <span class="item-meta">22/03/2026</span>
-                    <span style="font-size: 1.2rem;"><a href="https://github.com/Sleppy-af/HTTP-server-on-single-board-computer" target="_blank">HTTP server on single board computer</a></span>
-                    <p style="font-size: 0.95rem; color: #b0b0b0; margin-top: 10px;">Simple tutorial on setting your own http server and site on our beloved single board computer</p>
+                <div class="left-col">
+                    <h2>Projects</h2>
+                    <div class="item">
+                        <span class="item-meta">22/03/2026</span>
+                        <span style="font-size: 1.2rem;"><a href="https://github.com/Sleppy-af/HTTP-server-on-single-board-computer" target="_blank">HTTP server on single board computer</a></span>
+                        <p style="font-size: 0.95rem; color: #b0b0b0; margin-top: 10px;">Simple tutorial on setting your own http server and site on our beloved single board computer</p>
+                    </div>
+                    <div class="item">
+                        <span class="item-meta">18/03/2026</span>
+                        <span style="font-size: 1.2rem;"><a href="https://github.com/Sleppy-af/Modded-Minecraft-server-on-single-board-computer" target="_blank">Modded minecraft server on single board computer</a></span>
+                        <p style="font-size: 0.95rem; color: #b0b0b0; margin-top: 10px;">A quick, step by step tutorial how to set up a working, multiplayer minecraft server on our beloved single board computer.</p>
+                    </div>
                 </div>
-                <div class="item">
-                    <span class="item-meta">18/03/2026</span>
-                    <span style="font-size: 1.2rem;"><a href="https://github.com/Sleppy-af/Modded-Minecraft-server-on-single-board-computer" target="_blank">Modded minecraft server on single board computer</a></span>
-                    <p style="font-size: 0.95rem; color: #b0b0b0; margin-top: 10px;">A quick, step by step tutorial how to set up a working, multiplayer minecraft server on our beloved single board computer.</p>
-                </div>
-            </div>
 
-            <div class="right-col-wrapper">
-                <div class="content-align-box">
-                    <h2>You can find me here</h2>
-                    <ul class="contact-list">
-                        <li>
-                            <span class="item-meta">Discord</span> 
-                            <p>kidnap3d_</p>
-                        </li>
-                        <li>
-                            <span class="item-meta">Github</span> 
-                            <p><a href="https://github.com/Sleppy-af" target="_blank">github.com/Sleppy-af</a></p>
-                        </li>
-                        <li>
-                            <span class="item-meta">Bluesky</span>
-                            <p>kidnap3d.bsky.social</p> 
-                        </li>
-                    </ul>
+                <div class="right-col-wrapper">
+                    <div class="content-align-box">
+                        <h2>You can find me here</h2>
+                        <ul class="contact-list">
+                            <li><span class="item-meta">Discord</span><p>kidnap3d_</p></li>
+                            <li><span class="item-meta">Github</span><p><a href="https://github.com/Sleppy-af" target="_blank">github.com/Sleppy-af</a></p></li>
+                            <li><span class="item-meta">Bluesky</span><p>kidnap3d.bsky.social</p></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 
+    <script>
+        const music = document.getElementById('bg-music');
+        const playBtn = document.getElementById('play-btn');
+        const seekSlider = document.getElementById('seek-slider');
+        const overlay = document.getElementById('overlay');
+        const mainContent = document.getElementById('main-content');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+
+        // Formatowanie czasu (sekundy -> MM:SS)
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function handleEntry() {
+            overlay.classList.add('overlay-hidden');
+            mainContent.classList.add('content-visible');
+            music.play().then(() => {
+                playBtn.textContent = 'PAUSE';
+            });
+        }
+
+        overlay.addEventListener('click', handleEntry);
+
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (music.paused) {
+                music.play();
+                playBtn.textContent = 'PAUSE';
+            } else {
+                music.pause();
+                playBtn.textContent = 'PLAY';
+            }
+        });
+
+        music.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(music.duration);
+        });
+
+        music.addEventListener('timeupdate', () => {
+            if (!isNaN(music.duration)) {
+                seekSlider.value = (music.currentTime / music.duration) * 100;
+                currentTimeEl.textContent = formatTime(music.currentTime);
+            }
+        });
+
+        seekSlider.addEventListener('input', () => {
+            music.currentTime = (seekSlider.value / 100) * music.duration;
+        });
+    </script>
 </body>
 </html>
