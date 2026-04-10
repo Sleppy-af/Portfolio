@@ -1,306 +1,724 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sleppy's place</title>
-    <style>
-        /* --- ENTRY OVERLAY --- */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #383636;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            cursor: pointer;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sleppy's place // modernist</title>
+  <meta name="description" content="Modernist portfolio page for Sleppy." />
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --bg-alt: #efe8dc;
+      --text: #111111;
+      --muted: #555555;
+      --line: rgba(17, 17, 17, 0.12);
+      --accent: #111111;
+      --accent-soft: rgba(17, 17, 17, 0.04);
+      --radius: 22px;
+      --max: 1180px;
+      --shadow: 0 24px 60px rgba(17, 17, 17, 0.08);
+    }
 
-        #overlay-text {
-            font-family: ui-monospace, 'Cascadia Code', monospace;
-            color: #888;
-            font-size: 0.9rem;
-            letter-spacing: 0.3rem;
-            text-transform: uppercase;
-            animation: pulse 2.5s infinite;
-            user-select: none;
-        }
+    * { box-sizing: border-box; }
 
-        @keyframes pulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
+    html { scroll-behavior: smooth; }
 
-        #main-content {
-            filter: blur(20px);
-            transform: scale(0.98);
-            transition: filter 1.2s ease, transform 1.2s ease;
-        }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.15)),
+        radial-gradient(circle at top right, rgba(17,17,17,0.04), transparent 28%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        .overlay-hidden { opacity: 0 !important; visibility: hidden !important; }
-        .content-visible { filter: blur(0) !important; transform: scale(1) !important; }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(17,17,17,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17,17,17,0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.28;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+    }
 
-        /* --- BAZA --- */
-        body {
-            background-color: #383636; 
-            color: #ffffff;
-            font-family: ui-monospace, 'Cascadia Code', monospace;
-            line-height: 1.6;
-            margin: 0;
-            padding: 60px 0;
-            overflow-x: hidden;
-        }
+    a { color: inherit; text-decoration: none; }
 
-        .container { width: 100%; margin: 0; padding: 0; box-sizing: border-box; }
-        header { margin-bottom: 60px; text-align: center; }
-        h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
-        .education { color: #a0a0a0; font-size: 0.9rem; display: block; margin: 8px 0 40px 0; }
-        .separator { border-top: 1px solid #4a4848; width: 100%; margin-bottom: 60px; }
+    .wrap {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
 
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 2.5fr 1.5fr; /* Nieco szersza prawa kolumna dla dłuższego paska */
-            align-items: start;
-            row-gap: 80px;
-        }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
 
-        .left-col { text-align: left; padding-left: 120px; padding-right: 40px; }
-        .right-col-wrapper { display: flex; justify-content: flex-start; width: 100%; padding-right: 60px; }
-        .content-align-box { text-align: left; width: 100%; max-width: 400px; }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
-        .avatar-container {
-            width: 180px; height: 180px; border-radius: 50%;
-            overflow: hidden; border: 3px solid #4a4848; margin-bottom: 20px;
-        }
-        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+    .brand strong {
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
 
-        .profile-name { font-size: 1.4rem; font-weight: bold; display: block; }
-        .profile-handle { color: #888; font-size: 0.9rem; display: block; }
+    .brand span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
 
-        /* --- STYLOWY ODTWARZACZ --- */
-        .audio-player {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #4a4848;
-        }
+    .nav {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
 
-        .track-meta {
-            font-size: 0.75rem;
-            color: #fff;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
+    .nav a {
+      color: var(--muted);
+      font-size: 0.92rem;
+      padding: 8px 0;
+      position: relative;
+    }
 
-        .artist-title {
-            color: #888;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 3px;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
 
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+    .nav a:hover::after { transform: scaleX(1); }
 
-        #play-btn {
-            background: none;
-            border: 1px solid #666;
-            color: #fff;
-            cursor: pointer;
-            font-family: inherit;
-            padding: 5px 15px;
-            font-size: 0.7rem;
-            min-width: 70px;
-            transition: all 0.2s;
-        }
-        #play-btn:hover { background: #4a4848; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 0.9fr;
+      gap: 26px;
+      padding: 34px 0 18px;
+      align-items: start;
+    }
 
-        .timer {
-            font-size: 0.7rem;
-            color: #888;
-            min-width: 80px;
-        }
+    .hero-left { padding-right: 10px; }
 
-        /* Suwak */
-        #seek-slider {
-            flex-grow: 1;
-            height: 2px;
-            background: #4a4848;
-            appearance: none;
-            outline: none;
-            cursor: pointer;
-            transition: height 0.2s;
-        }
-        #seek-slider:hover { height: 4px; }
-        #seek-slider::-webkit-slider-thumb {
-            appearance: none;
-            width: 8px;
-            height: 8px;
-            background: #fff;
-            cursor: pointer;
-        }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+    }
 
-        h2 { font-size: 0.8rem; color: #888888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
-        .item { margin-bottom: 40px; border-bottom: 1px solid #3d3b3b; padding-bottom: 25px; }
-        code { background-color: #4a4848; padding: 2px 6px; border-radius: 4px; }
-        a { color: #ffffff; text-decoration: none; border-bottom: 1px solid #666; }
-        a:hover { color: #a0a0a0; border-bottom-color: #ffffff; }
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
 
-        .contact-list { list-style: none; padding: 0; margin: 0; }
-        .contact-list li { margin-bottom: 20px; }
-        .item-meta { color: #888888; font-size: 0.75rem; display: block; margin-bottom: 4px; }
+    h1 {
+      margin: 0;
+      font-size: clamp(3rem, 10vw, 8rem);
+      line-height: 0.88;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+      max-width: 8.5ch;
+    }
 
-        @media (max-width: 1000px) {
-            .grid-layout { grid-template-columns: 1fr; }
-            .left-col { padding-left: 40px; padding-right: 40px; text-align: center; }
-            .right-col-wrapper { justify-content: center; padding-right: 0; margin-top: 40px; }
-            .content-align-box { text-align: center; max-width: 90%; }
-            .avatar-container { margin: 0 auto 20px auto; }
-            .track-meta { justify-content: center; gap: 20px; }
-        }
-    </style>
+    .hero-copy {
+      margin-top: 20px;
+      max-width: 58ch;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+      box-shadow: 0 8px 20px rgba(17,17,17,0.04);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      background: var(--accent-soft);
+      border-color: rgba(17,17,17,0.25);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .hero-right {
+      display: grid;
+      gap: 16px;
+      margin-left: 42px;
+      padding-top: 6px;
+    }
+
+    .portrait {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      aspect-ratio: 1 / 1;
+    }
+
+    .portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .profile {
+      display: grid;
+      gap: 8px;
+      padding: 18px 0 0;
+    }
+
+    .profile-name {
+      font-size: 1.4rem;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+    }
+
+    .profile-meta {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 22px;
+      padding: 18px 0 38px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      padding: 26px;
+      width: 100%;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-head h2 {
+      margin: 0;
+      font-size: 0.88rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .chip {
+      font-size: 0.76rem;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.6);
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+
+    .bio p {
+      margin: 0 0 14px;
+      line-height: 1.85;
+      color: #222;
+      font-size: 1rem;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(17,17,17,0.06);
+      border: 1px solid rgba(17,17,17,0.08);
+    }
+
+    .audio {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .track-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .track-title {
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .timer {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    #play-btn {
+      min-width: 92px;
+      padding: 11px 15px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    #play-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.92;
+    }
+
+    #seek-slider {
+      width: 100%;
+      appearance: none;
+      height: 2px;
+      background: rgba(17,17,17,0.16);
+      outline: none;
+      cursor: pointer;
+    }
+
+    #seek-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid white;
+    }
+
+    .projects {
+      grid-column: 1 / -1;
+    }
+
+    .projects .card {
+      width: 100%;
+    }
+
+    .projects .projects-list {
+      display: grid;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .project {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.54);
+      transition: transform .2s ease, border-color .2s ease;
+      width: 100%;
+    }
+
+    .project:hover {
+      transform: translateY(-2px);
+      border-color: rgba(17,17,17,0.2);
+    }
+
+    .project .date {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .project h3 {
+      margin: 0 0 8px;
+      font-size: 1.04rem;
+      line-height: 1.35;
+    }
+
+    .project p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .stack {
+      display: grid;
+      gap: 22px;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .contact {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.55);
+    }
+
+    .contact .label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      padding: 12px 0 36px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at center, rgba(17,17,17,0.08), transparent 35%),
+        rgba(246, 242, 234, 0.97);
+      cursor: pointer;
+      transition: opacity .7s ease, visibility .7s ease;
+    }
+
+    #overlay-text {
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: white;
+      text-transform: uppercase;
+      letter-spacing: 0.28em;
+      font-size: 0.82rem;
+      user-select: none;
+      box-shadow: var(--shadow);
+    }
+
+    .overlay-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-right {
+        margin-left: 0;
+      }
+
+      .projects {
+        grid-column: auto;
+      }
+
+      h1 {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(var(--max), calc(100% - 18px));
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero {
+        padding-top: 20px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: clamp(2.6rem, 16vw, 4.5rem);
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div id="overlay">
+    <div id="overlay-text">click to enter</div>
+  </div>
 
-    <div id="overlay">
-        <div id="overlay-text">[ click to enter ]</div>
-    </div>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <strong>Sleppy's place</strong>
+        <span>electronics and stuff</span>
+      </div>
+      <nav class="nav">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-    <div id="main-content">
-        <div class="container">
-            <header>
-                <h1>Sleppy's place</h1>
-                <span class="education">Electronics and stuff</span>
-                <div class="separator"></div>
-            </header>
-
-            <div class="grid-layout">
-                
-                <div class="left-col">
-                    <h2>Bio</h2>
-                    <p>Hi everyone! I'm <strong>Olaf</strong>, for most of you online known as <code>Sleppy</code>. I'm currently an <i>electronics student</i> specializing on working with single board computers such as raspberry pi or orange pi. I can do anything you wish for with them, from setting a simple pi hole to creating and configuring a whole consoles emulator. I also have a lot of experience with linux stuff (I use arch btw.) which I daily drive on my home PC.</p> 
-                    <p>While I'm not neck deep into contemplating about my existence (aka. my pi crushes again and again) you can find me:</p> 
-                    <p>- Making a random project on kicad</p>
-                    <p>- Learning how to code (I'll give up in less than a month again)</p>
-                    <p>- Being a 24/7 PC tech assistant for my friends (u can find us <a href="https://discord.gg/Mb5hJB32R" target="_blank">here</a>)</p>
-                </div>
-
-                <div class="right-col-wrapper">
-                    <div class="content-align-box">
-                        <div class="avatar-container">
-                            <img src="gitpfp.jpg" alt="Sleppy Avatar">
-                        </div>
-                        <div class="profile-name">Sleppy</div>
-                        <div class="profile-handle">Sleppy-af</div>
-
-                        <div class="audio-player">
-                            <audio id="bg-music" loop preload="auto">
-                                <source src="music.mp3" type="audio/mpeg">
-                            </audio>
-                            
-                            <div class="track-meta">
-                                <div class="artist-title">Gibbs — Zrobilem to dla siebie</div>
-                                <div class="timer"><span id="current-time">0:00</span> / <span id="duration">0:00</span></div>
-                            </div>
-
-                            <div class="player-controls">
-                                <button id="play-btn">PLAY</button>
-                                <input type="range" id="seek-slider" value="0" max="100">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="left-col">
-                    <h2>Projects</h2>
-                    <div class="item">
-                        <span class="item-meta">22/03/2026</span>
-                        <span style="font-size: 1.2rem;"><a href="https://github.com/Sleppy-af/HTTP-server-on-single-board-computer" target="_blank">HTTP server on single board computer</a></span>
-                        <p style="font-size: 0.95rem; color: #b0b0b0; margin-top: 10px;">Simple tutorial on setting your own http server and site on our beloved single board computer</p>
-                    </div>
-                    <div class="item">
-                        <span class="item-meta">18/03/2026</span>
-                        <span style="font-size: 1.2rem;"><a href="https://github.com/Sleppy-af/Modded-Minecraft-server-on-single-board-computer" target="_blank">Modded minecraft server on single board computer</a></span>
-                        <p style="font-size: 0.95rem; color: #b0b0b0; margin-top: 10px;">A quick, step by step tutorial how to set up a working, multiplayer minecraft server on our beloved single board computer.</p>
-                    </div>
-                </div>
-
-                <div class="right-col-wrapper">
-                    <div class="content-align-box">
-                        <h2>You can find me here</h2>
-                        <ul class="contact-list">
-                            <li><span class="item-meta">Discord</span><p>kidnap3d_</p></li>
-                            <li><span class="item-meta">Github</span><p><a href="https://github.com/Sleppy-af" target="_blank">github.com/Sleppy-af</a></p></li>
-                            <li><span class="item-meta">Bluesky</span><p>kidnap3d.bsky.social</p></li>
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
+    <section class="hero">
+      <div class="hero-left">
+        <div class="eyebrow">me, 2026</div>
+        <h1>The impossible starts in the mind.</h1>
+        <p class="hero-copy">
+          Hi, I'm <strong>Olaf</strong>, known online as <code>Sleppy</code>. I build practical things with single board computers,
+          work with Linux, and create guides that turn technical setups into simple, usable systems.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#projects">Explore work</a>
+          <a class="btn" href="#contact">Get in touch</a>
         </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="portrait">
+          <img src="gitpfp.jpg" alt="Sleppy Avatar">
+        </div>
+        <div class="profile">
+          <div class="profile-name">Sleppy</div>
+          <div class="profile-meta">
+            Electronics student focused on Raspberry Pi, Orange Pi, Linux systems, PCB creating and clear technical documentation.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      <section class="card bio" id="about">
+        <div class="card-head">
+          <h2>About</h2>
+          <span class="chip">Biography</span>
+        </div>
+
+        <p>
+          I'm an <strong>electronics student</strong> specializing in single board computers such as Raspberry Pi and Orange Pi.
+          I can work on setups ranging from Pi-hole to console emulators, and I enjoy making systems that are simple, reliable and easy to maintain.
+        </p>
+        <p>
+          I also spend a lot of time on Linux stuff, and I daily drive Debian on my home PC.
+          When I'm not fighting with hardware or software, I'm making random KiCad projects or pretending I'm about to learn how to code again.
+        </p>
+        <p>
+          Core stack: <code>Linux</code> <code>KiCad</code> <code>Raspberry Pi</code> <code>Orange Pi</code> <code>Debian</code>
+        </p>
+
+        <div class="audio">
+          <audio id="bg-music" loop preload="auto">
+            <source src="music.mp3" type="audio/mpeg">
+          </audio>
+
+          <div class="track-row">
+            <div class="track-title">Chase Atlantic — Die for me</div>
+            <div class="timer"><span id="current-time">0:00</span> / <span id="duration">0:00</span></div>
+          </div>
+
+          <div class="controls">
+            <button id="play-btn">PLAY</button>
+            <input type="range" id="seek-slider" value="0" max="100">
+          </div>
+        </div>
+      </section>
+
+      <aside class="stack">
+        <section class="card" id="contact">
+          <div class="card-head">
+            <h2>Contact</h2>
+            <span class="chip">Reach me</span>
+          </div>
+
+          <ul class="list">
+            <li class="contact">
+              <span class="label">Discord</span>
+              <div>kidnap3d_</div>
+            </li>
+            <li class="contact">
+              <span class="label">GitHub</span>
+              <div><a href="https://github.com/Sleppy-af" target="_blank" rel="noopener noreferrer">github.com/Sleppy-af</a></div>
+            </li>
+            <li class="contact">
+              <span class="label">Bluesky</span>
+              <div>kidnap3d.bsky.social</div>
+            </li>
+          </ul>
+        </section>
+      </aside>
+
+      <section class="card projects" id="projects">
+        <div class="card-head">
+          <h2>Projects</h2>
+          <span class="chip">Selected work</span>
+        </div>
+
+        <div class="projects-list">
+
+        <article class="project">
+            <span class="date">11/04/2026</span>
+            <h3><a href="https://github.com/Sleppy-af/minecraft-automatic-server-message" target="_blank" rel="noopener noreferrer">Minecraft server auto message</a></h3>
+            <p>A simple script that let send message through server console every 5 mins. Made for cuberite.</p>
+          </article>
+
+          <article class="project">
+            <span class="date">22/03/2026</span>
+            <h3><a href="https://github.com/Sleppy-af/HTTP-server-on-single-board-computer" target="_blank" rel="noopener noreferrer">HTTP server on single board computer</a></h3>
+            <p>Simple tutorial on setting up your own HTTP server and site on a single board computer.</p>
+          </article>
+
+          <article class="project">
+            <span class="date">18/03/2026</span>
+            <h3><a href="https://github.com/Sleppy-af/Modded-Minecraft-server-on-single-board-computer" target="_blank" rel="noopener noreferrer">Modded Minecraft server on single board computer</a></h3>
+            <p>A quick step-by-step tutorial for setting up a working multiplayer Minecraft server on an SBC.</p>
+          </article>
+
+        </div>
+      </section>
     </div>
 
-    <script>
-        const music = document.getElementById('bg-music');
-        const playBtn = document.getElementById('play-btn');
-        const seekSlider = document.getElementById('seek-slider');
-        const overlay = document.getElementById('overlay');
-        const mainContent = document.getElementById('main-content');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationEl = document.getElementById('duration');
+    <div class="footer">Sleppy's place // modernist edition</div>
+  </div>
 
-        // Formatowanie czasu (sekundy -> MM:SS)
-        function formatTime(seconds) {
-            const min = Math.floor(seconds / 60);
-            const sec = Math.floor(seconds % 60);
-            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-        }
+  <script>
+    const music = document.getElementById('bg-music');
+    const playBtn = document.getElementById('play-btn');
+    const seekSlider = document.getElementById('seek-slider');
+    const overlay = document.getElementById('overlay');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
 
-        function handleEntry() {
-            overlay.classList.add('overlay-hidden');
-            mainContent.classList.add('content-visible');
-            music.play().then(() => {
-                playBtn.textContent = 'PAUSE';
-            });
-        }
+    function formatTime(seconds) {
+      if (!isFinite(seconds)) return '0:00';
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
 
-        overlay.addEventListener('click', handleEntry);
+    async function handleEntry() {
+      overlay.classList.add('overlay-hidden');
+      try {
+        await music.play();
+        playBtn.textContent = 'PAUSE';
+      } catch (e) {}
+    }
 
-        playBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (music.paused) {
-                music.play();
-                playBtn.textContent = 'PAUSE';
-            } else {
-                music.pause();
-                playBtn.textContent = 'PLAY';
-            }
-        });
+    overlay.addEventListener('click', handleEntry);
 
-        music.addEventListener('loadedmetadata', () => {
-            durationEl.textContent = formatTime(music.duration);
-        });
+    playBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (music.paused) {
+        music.play();
+        playBtn.textContent = 'PAUSE';
+      } else {
+        music.pause();
+        playBtn.textContent = 'PLAY';
+      }
+    });
 
-        music.addEventListener('timeupdate', () => {
-            if (!isNaN(music.duration)) {
-                seekSlider.value = (music.currentTime / music.duration) * 100;
-                currentTimeEl.textContent = formatTime(music.currentTime);
-            }
-        });
+    music.addEventListener('loadedmetadata', () => {
+      durationEl.textContent = formatTime(music.duration);
+    });
 
-        seekSlider.addEventListener('input', () => {
-            music.currentTime = (seekSlider.value / 100) * music.duration;
-        });
-    </script>
+    music.addEventListener('timeupdate', () => {
+      if (!isNaN(music.duration) && music.duration > 0) {
+        seekSlider.value = (music.currentTime / music.duration) * 100;
+        currentTimeEl.textContent = formatTime(music.currentTime);
+      }
+    });
+
+    seekSlider.addEventListener('input', () => {
+      if (!isNaN(music.duration) && music.duration > 0) {
+        music.currentTime = (seekSlider.value / 100) * music.duration;
+      }
+    });
+  </script>
 </body>
 </html>
