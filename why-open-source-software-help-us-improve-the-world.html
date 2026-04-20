@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article // Sleppy's place</title>
+  <meta name="description" content="dada." />
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --text: #111111;
+      --muted: #5a5a5a;
+      --line: rgba(17, 17, 17, 0.12);
+      --accent: #111111;
+      --accent-soft: rgba(17, 17, 17, 0.04);
+      --radius: 22px;
+      --max: 980px;
+      --shadow: 0 24px 60px rgba(17, 17, 17, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.16)),
+        radial-gradient(circle at top right, rgba(17,17,17,0.04), transparent 28%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(17,17,17,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17,17,17,0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.28;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand strong {
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: var(--muted);
+      font-size: 0.92rem;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 3px;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+
+    .nav a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .article-shell {
+      padding: 34px 0 40px;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 18px;
+    }
+
+    .breadcrumbs a {
+      color: var(--muted);
+    }
+
+    .article-card {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background: rgba(255,255,255,0.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .article-hero {
+      padding: 30px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(circle at top right, rgba(17,17,17,0.05), transparent 30%),
+        rgba(255,255,255,0.55);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+      max-width: 12ch;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.65);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .article-image {
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      background: linear-gradient(135deg, rgba(17,17,17,0.08), rgba(17,17,17,0.02));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .article-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 26px;
+      padding: 28px 30px 30px;
+      align-items: start;
+    }
+
+    .post {
+      min-width: 0;
+    }
+
+    .post p {
+      margin: 0 0 16px;
+      color: #222;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .post h2 {
+      margin: 28px 0 12px;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .post blockquote {
+      margin: 22px 0;
+      padding: 18px 20px;
+      border-left: 2px solid var(--accent);
+      background: rgba(17,17,17,0.03);
+      color: #222;
+      line-height: 1.8;
+      border-radius: 0 16px 16px 0;
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 18px;
+    }
+
+    .sidebox {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.6);
+      padding: 18px;
+    }
+
+    .sidebox h3 {
+      margin: 0 0 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .sidebox ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+      color: #222;
+    }
+
+    .sidebox li {
+      line-height: 1.6;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      font-size: 0.92rem;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .back:hover {
+      transform: translateY(-2px);
+      background: var(--accent-soft);
+      border-color: rgba(17,17,17,0.2);
+    }
+
+    .footer {
+      padding: 12px 0 36px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(var(--max), calc(100% - 18px));
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .article-hero,
+      .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 12vw, 3.8rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <strong>Sleppy's place</strong>
+        <span>electronics and stuff</span>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="articles.html">Articles</a>
+      </nav>
+    </header>
+
+    <main class="article-shell">
+      <div class="breadcrumbs">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <a href="articles.html">Articles</a>
+        <span>/</span>
+        <span>Article</span>
+      </div>
+
+      <article class="article-card">
+        <div class="article-hero">
+          <div class="eyebrow"></div>
+          <h1>Why open-source software actually help us improve the world</h1>
+          <div class="meta-row">
+            <span class="pill">12/04/2026</span>
+            <span class="pill">8 min read</span>
+          </div>
+        </div>
+
+        <div class="content">
+          <section class="post">
+            <p>
+              We like to think of open-source softwares as a developer thing<br>
+              <br>* a github repo
+              <br>* a side project
+              <br>* a cool tools with 300 stars and readme that nobody cares about<br>
+              <br>But seeing it that way misses the point entirely . Open source is not <strong>just</strong> a development model, it's an infrastructure model for society. And when it works, it doesn't just improve software, it improves how the world functions.
+            </p>
+
+            <h2>Public money, public code</h2>
+            <p>
+              Let's start with something that should be obvious, yet somehow still it isn't. If taxpayers fund software, taxpayers should have access to it. Not as a bonus, not as a "nice to have". As a <strong>default</strong>. When governments build closed systems, they're effectively saying: </p>
+              <blockquote>
+                "Trust us. You don't need to worry, we have it"
+              </blockquote>
+            <p>
+              But trust without transparency is fragile. Open-source software flips that model. It allows citizens, researchers and independent experts to verify, not just believe. That difference mattwrs more than we often admit. It's tje difference between: "We think it's secure" and "Anyone can audit this system and prove whether it is or not". That's not ideology. That's accountability
+            </p>
+
+            <h2>The compounding effect of shared effort</h2>
+            <p>
+              One of the most underated aspects of open source is how it compounds over time. A single project can start small, trivial and still become foundational. Take something as simple as <code>curl</code>. One tool with one original author. It's everywhere now: servers, phones, embedded systems. Not because corpos decided to push it globaly <strong>but</strong> because it was available, adaptable and reusable. This is how open source scales. One person builds something useful, others improve it, someone adapts it into a larger system and then another team integrates it into a larger system. And suddenly, somethung that started as a random 50 lines script becomes a monumental part of a global infrastructure. That's not an accident. That's a model working as intended
+            </p>
+
+            <h2>Open source as a force multiplier</h2>
+            <p>
+              In closed environments, progress is linear. In open ecosystems, it's random and that's exactly a good part. When code is available bugs can be found by anyone, features can be added by anyone, integrations can be built without permissions. This turn everyone into contributors, everyone can add something. And that changes everything. Because the biggest bottleneck in software isn't ideas, it's their execution. Open source removes that bottleneck by allowing everyone to repair the problems with all they know
+            </p>
+
+            <h2>Transparency is not the same as security</h2>
+            <p>
+              Let's be honest for a quick moment. Open source is often sold with a simple argument.
+            </p>
+              <blockquote>
+                "More eyes = more secure software"
+              </blockquote>
+            <p>
+              It sounds great. It's also incomplete. There are real-world examples where this didn't hold. Idk if you heard about <code>xz-utils</code>. For ppl that don't know, the xz project builded trust across developers for years with their fully open source code and then made a backdor which nobody would find out if not some random accident. Even tho the code was public, backdor still somehow made it in. It all proves one specific point. Openness allows inspection but it does not guarantee it happens. So no, open source is not magically secure. But the important part is, closed source doesn't solve this problem either, it only hides it. With proprltary systems, vulnerabilities can exist for years without anyone outside the vendor knowing. With open source, flaws are at least discoverable, still it doesn't elininate all the risks but it funtamentally changes the power which can detect and fix it.
+            </p>
+
+            <h2>The right to adapt</h2>
+            <p>
+              One of the most powerful and often overlooked feautures of open source is the right to fork. If a project stops evolving, you can continue it. If a company changes direction, you can easily preserve what mattered. If a tool no longer fits what you expect from it, you can change it all you wish. This creates resilience. We've seem ot repeatedly, projects forked after license changes, communities continuing abandomed tools, entire ecosystems rebuilt around shared foundations. THis is not fragmentation, this it evolution under user control. And when applied to public infrasturcture, it becomes critical, because governments, vendors and priorities change. Code should not disappear when they do.
+            </p>
+
+            <h2>Oepn source hangs beyond developers</h2>
+            <p>
+              Open source inpact goes far and beyond engineering teams and single programers. It affects education, security researches, journalism and publicy trust as much as devs. Students learns from real, open source system cuz they're easy to find. Systems can be investigated by journalists as much as they wish and transparency replaces the blind trust many companies build. It turns software from a black box into a shared artifact, something that can be studied, improved and questioned if needed
+            </p>
+
+            <h2>The bigger picture</h2>
+            <p>
+              Open source is not only about the code, it's about who has acces, control, and who gets to participate. It's about shifting from centralized ownership to shared responsibilities. We live in a world that is heavily dependent on software, and that shift matters... a lot.
+            </p>
+
+            <h2>Summary</h2>
+            <p>
+              Open source don't quarantee a better world, but it creates conditions where evolving is easier and the vision of better world is possible. More collaboration, more resilience and most importantly more transparency.
+            </p>
+
+            <a class="back" href="articles.html">← Back to articles</a>
+          </section>
+
+          <aside class="sidebar">
+            <div class="sidebox">
+              <h3>Article info</h3>
+              <ul>
+                <li>Category: Overal Tech</li>
+                <li>Type: Talk</li>
+                <li>Status: Published</li>
+              </ul>
+            </div>
+
+          </aside>
+        </div>
+      </article>
+    </main>
+
+    <div class="footer">© Copyright Sleppy-af 2026</div>
+  </div>
+</body>
+</html>
