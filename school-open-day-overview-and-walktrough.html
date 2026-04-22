@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article // Sleppy's place</title>
+  <meta name="description" content="dada." />
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --text: #111111;
+      --muted: #5a5a5a;
+      --line: rgba(17, 17, 17, 0.12);
+      --accent: #111111;
+      --accent-soft: rgba(17, 17, 17, 0.04);
+      --radius: 22px;
+      --max: 980px;
+      --shadow: 0 24px 60px rgba(17, 17, 17, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.16)),
+        radial-gradient(circle at top right, rgba(17,17,17,0.04), transparent 28%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(17,17,17,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17,17,17,0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.28;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand strong {
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: var(--muted);
+      font-size: 0.92rem;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 3px;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+
+    .nav a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .article-shell {
+      padding: 34px 0 40px;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 18px;
+    }
+
+    .breadcrumbs a {
+      color: var(--muted);
+    }
+
+    .article-card {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background: rgba(255,255,255,0.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .article-hero {
+      padding: 30px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(circle at top right, rgba(17,17,17,0.05), transparent 30%),
+        rgba(255,255,255,0.55);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+      max-width: 12ch;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.65);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .article-image {
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      background: linear-gradient(135deg, rgba(17,17,17,0.08), rgba(17,17,17,0.02));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .article-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 26px;
+      padding: 28px 30px 30px;
+      align-items: start;
+    }
+
+    .post {
+      min-width: 0;
+    }
+
+    .post p {
+      margin: 0 0 16px;
+      color: #222;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .post h2 {
+      margin: 28px 0 12px;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .post blockquote {
+      margin: 22px 0;
+      padding: 18px 20px;
+      border-left: 2px solid var(--accent);
+      background: rgba(17,17,17,0.03);
+      color: #222;
+      line-height: 1.8;
+      border-radius: 0 16px 16px 0;
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 18px;
+    }
+
+    .sidebox {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.6);
+      padding: 18px;
+    }
+
+    .sidebox h3 {
+      margin: 0 0 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .sidebox ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+      color: #222;
+    }
+
+    .sidebox li {
+      line-height: 1.6;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      font-size: 0.92rem;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .back:hover {
+      transform: translateY(-2px);
+      background: var(--accent-soft);
+      border-color: rgba(17,17,17,0.2);
+    }
+
+    .footer {
+      padding: 12px 0 36px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(var(--max), calc(100% - 18px));
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .article-hero,
+      .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 12vw, 3.8rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <strong>Sleppy's place</strong>
+        <span>electronics and stuff</span>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="articles.html">Articles</a>
+      </nav>
+    </header>
+
+    <main class="article-shell">
+      <div class="breadcrumbs">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <a href="articles.html">Articles</a>
+        <span>/</span>
+        <span>Article</span>
+      </div>
+
+      <article class="article-card">
+        <div class="article-hero">
+          <div class="eyebrow"></div>
+          <h1>School open day.<br> overview and walktrought</h1>
+          <div class="meta-row">
+            <span class="pill">22/04/2026</span>
+            <span class="pill">7 min read</span>
+          </div>
+        </div>
+
+        <div class="content">
+          <section class="post">
+            <p>
+              Let's start simple. I'm a student walking to one of many technical schools in Poland. Every and each of these schools usually make "open days" to show our possible freshmans around the school, presenting basic ecosystem and profiles the school has to offer. For this to happen every profile takes few of their students to organise and basically carry the entire day. I was one of that students, promoting our electronics profile.
+            </p>
+
+            <h2>Making own projects</h2>
+            <p>
+              Every one of us, promoting our profile had to make at least one "own project", which means doing something we thing will hype school the most. I decided to do 2 simple things that could hype non-techincal people and interest the ones that actually want to understand it. Also I wanted to include SBC's in every of them.
+            </p>
+
+            <p>
+              By creating first of the two projects I made something really, but really simple, that could interest ppl with it's practical usage and also promote my person a bit. A website, my website >w<. I simply set up an apache server and put my index.html file in there, then prepared a separate laptop and ran the site through localhost. It was a simple, 10mins preparation thing.
+            </p>
+
+            <p>
+              Then time arrived to build the second project. It was a bit harder but still took no more than half an hour. A minecraft server set up on my second SBC. This one was powered by software called Cuberite <a href="https://cuberite.org/" target="_blank">(Click here)</a>, which made it a LOT easier. After setting up the server itself, I decided to add something from myself too, a auto message in the chat every 5 mins, inviting ppl to our school. It was supposed to be easy... right? First time using lua, reading documentation and realising that some of the commands don't work as they should on cuberite, but after a bit of fighting it suprisingly worked (only in a overworld tho, but noone need to know about that). So the project was ready too.
+            </p>
+
+            <p>
+              I almost forgot, here you have the SBC's specs:
+              <br> <strong>Project one (website):</strong> Rasberry pi 2011.12. It's a prototype of model 1a, which was first rasberry ever created. It runs on Samsung K4P4G324EB-AGC1 chip and has 512MB of lpddr3 RAM.
+              <br> <strong>Project two (mc server):</strong> Orange pi 4 pro. It's a SBC which is indiffrent rival to rpi 4b. It runs on Allwinner A733 chip and has 8GB of lpddr5 RAM
+
+            <h2>Other projects</h2>
+            <p>
+              There were few more students except me, introducing their own little makings. Let's talk about them too
+            </p>
+
+            <p>
+              My classmate and friend, who was invited to represent the school too, made the projects introducing the things he love the most in a whole electronics world. A lock, RFID lock, with wireless block made with ESP32 microcontroller. There was also a simple LCD screen showing all the info, pushed through i2c to second ESP. The project itself was really cool and made many ppl realise that everyday architecture is really important to us, electronics students cuz the same RFID locks are commonly used as entry keys to buildings, so commonly that you rarely see a key.
+            </p>
+
+            <p>
+              Two upperclassmates prepared a robot fights area and a robots made with lego technic. Not the one from the instructions tho, they were their own little creations, builded from parts available. It was all powered by small motors and connected via bluetoth to tablets with lego technic app installed.
+            </p>
+
+            <p>
+              There were also three last year students, which were graduating the next week, each one with a project showcasing other field. First one prepared satelite, which showed signal from turkish television, highlitings posibilities that our school assortment can bring us to. Second one showed basics of soldering, making everyone realise how important and basic skill it is to all of us working in this field. And last but not least, third one presendted how osciloscopes work and told ppl about the usage they were needed to.
+            </p>
+
+            <h2>The day itself</h2>
+            <p>
+              Open day itself started at 9am and ended on 3pm. We were waiting in one of the classroms, a main electronics workshop and just waiter for guides to bring ppl in. It was divided by two parts.
+            </p>
+
+            <p>
+              First part, that lasted from 9am to 12pm was reserved especially to organised groups coming from elementary schools all around the city. It was the more chaotic part, where larger part of disciples were ther because they nedded to, not wanted to. We needed to calm them down from time to time to make everything run smooth. They were some of them that looked actually interested but social pressure unfortunatly quieted down most of them.
+            </p>
+
+            <p>
+              Second part was the one that came more to my likings. It was reserved for disciples who actually wanted to know something about our school. Doors were open and they were allowed to come in in their own little groups, with parents or simply alone. This part allowed us to comunicate more freely to each one of them and actually engage them in simple conversations most of the time. I really like talking so it was the best I could wish for.
+            </P>
+
+            <h2>Cleaning part</h2>
+            <p>
+              Even tho the day ended at 5 and school was starting to be emptier and emptier, we just started to clear everything out. All the stuff we brang from our homes had to be packed back and everything that was school property had to go back to it's original places. After all that we made a simple briefing and check if everything was gone and turned off before walking out to finally rest.
+            </p>
+
+            <h2>Quick summary</h2>
+            <p>
+              Open day is very important part of every school, we really try our best to promote it and make disciples realise that technical schools can be a lot of fun. We encountered a lot of problems and some of the equipment was fighting us with all it's will, but I still think that the day was made perfectly. Now we have to only wait for the results.
+            </p>
+
+            <a class="back" href="articles.html">← Back to articles</a>
+          </section>
+
+          <aside class="sidebar">
+            <div class="sidebox">
+              <h3>Article info</h3>
+              <ul>
+                <li>Category: Overal Tech</li>
+                <li>Type: Talk</li>
+                <li>Status: Published</li>
+              </ul>
+            </div>
+
+          </aside>
+        </div>
+      </article>
+    </main>
+
+    <div class="footer">© Copyright Sleppy-af 2026</div>
+  </div>
+</body>
+</html>
