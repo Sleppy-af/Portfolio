@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article // Sleppy's place</title>
+  <meta name="description" content="dada." />
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --text: #111111;
+      --muted: #5a5a5a;
+      --line: rgba(17, 17, 17, 0.12);
+      --accent: #111111;
+      --accent-soft: rgba(17, 17, 17, 0.04);
+      --radius: 22px;
+      --max: 980px;
+      --shadow: 0 24px 60px rgba(17, 17, 17, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.16)),
+        radial-gradient(circle at top right, rgba(17,17,17,0.04), transparent 28%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(17,17,17,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17,17,17,0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.28;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand strong {
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: var(--muted);
+      font-size: 0.92rem;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 3px;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+
+    .nav a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .article-shell {
+      padding: 34px 0 40px;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 18px;
+    }
+
+    .breadcrumbs a {
+      color: var(--muted);
+    }
+
+    .article-card {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background: rgba(255,255,255,0.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .article-hero {
+      padding: 30px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(circle at top right, rgba(17,17,17,0.05), transparent 30%),
+        rgba(255,255,255,0.55);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+      max-width: 12ch;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.65);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .article-image {
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      background: linear-gradient(135deg, rgba(17,17,17,0.08), rgba(17,17,17,0.02));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .article-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 26px;
+      padding: 28px 30px 30px;
+      align-items: start;
+    }
+
+    .post {
+      min-width: 0;
+    }
+
+    .post p {
+      margin: 0 0 16px;
+      color: #222;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .post h2 {
+      margin: 28px 0 12px;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .post blockquote {
+      margin: 22px 0;
+      padding: 18px 20px;
+      border-left: 2px solid var(--accent);
+      background: rgba(17,17,17,0.03);
+      color: #222;
+      line-height: 1.8;
+      border-radius: 0 16px 16px 0;
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 18px;
+    }
+
+    .sidebox {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.6);
+      padding: 18px;
+    }
+
+    .sidebox h3 {
+      margin: 0 0 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .sidebox ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+      color: #222;
+    }
+
+    .sidebox li {
+      line-height: 1.6;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      font-size: 0.92rem;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .back:hover {
+      transform: translateY(-2px);
+      background: var(--accent-soft);
+      border-color: rgba(17,17,17,0.2);
+    }
+
+    .footer {
+      padding: 12px 0 36px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(var(--max), calc(100% - 18px));
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .article-hero,
+      .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 12vw, 3.8rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <strong>Sleppy's place</strong>
+        <span>electronics and stuff</span>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="articles.html">Articles</a>
+      </nav>
+    </header>
+
+    <main class="article-shell">
+      <div class="breadcrumbs">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <a href="articles.html">Articles</a>
+        <span>/</span>
+        <span>Article</span>
+      </div>
+
+      <article class="article-card">
+        <div class="article-hero">
+          <div class="eyebrow">Lorem ipsum</div>
+          <h1>Lorem ipsum</h1>
+          <div class="meta-row">
+            <span class="pill">12/04/2026</span>
+            <span class="pill">8 min read</span>
+            <span class="pill">By Sleppy</span>
+          </div>
+        </div>
+
+        <div class="content">
+          <section class="post">
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed urna felis, mollis vitae elit sit amet, malesuada porttitor ligula. Fusce egestas ultricies nulla, non sagittis sapien maximus quis. Curabitur ut sem et risus ullamcorper suscipit. Aenean porta quam vel tortor sagittis, nec porta mi pharetra. In velit turpis, tristique et mi ac, semper facilisis ipsum. Integer blandit nisl id lorem mollis malesuada. Aenean blandit bibendum tortor, sodales molestie eros finibus in.
+            </p>
+
+            <p>
+              Integer dapibus, elit ut bibendum facilisis, sem lectus varius lacus, ut pretium metus libero in sapien. Proin fermentum vulputate arcu, in efficitur ex cursus non. Ut faucibus ultricies enim, vel viverra dolor suscipit id. Vestibulum quis ipsum lectus. Nulla quis imperdiet ligula, sit amet pharetra purus. Donec sed lorem efficitur, condimentum quam nec, euismod sapien. Vestibulum vel libero convallis, vehicula risus at, viverra nisi. Morbi quis fringilla dui, nec placerat nisi. Phasellus pretium eros mi, ac sollicitudin orci semper at. Sed tincidunt vel dolor ac lacinia. Etiam at tristique massa. Aenean vitae purus vel urna molestie ultrices.
+            </p>
+
+            <h2>Lorem ispum</h2>
+            <p>
+              Aenean sagittis neque tortor, et rhoncus augue sollicitudin ac. Maecenas vestibulum, ex eget elementum commodo, orci sem feugiat dolor, at interdum sem metus quis quam. Praesent velit ipsum, euismod eu pellentesque malesuada, tempor eu erat. Mauris purus tortor, tempor vel ex nec, aliquam ornare nunc. Donec arcu nunc, iaculis et lobortis at, tempus gravida dui. Sed imperdiet vulputate sodales. Vestibulum in sapien purus.
+            </p>
+
+            <blockquote>
+              Cras dignissim felis at leo bibendum tincidunt. Nunc ultricies scelerisque eros quis commodo. Donec vulputate cursus nisl nec viverra. Proin dictum ipsum sit amet risus viverra, at vehicula ex venenatis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas consequat porttitor massa, at tincidunt dolor convallis eget. Morbi arcu quam, scelerisque suscipit sapien quis, facilisis lacinia erat. Vivamus cursus leo a odio fringilla, sed viverra neque eleifend.
+            </blockquote>
+
+            <p>
+              Etiam pellentesque lectus mi. Vivamus malesuada luctus lorem ut imperdiet. Maecenas magna libero, tincidunt eu malesuada quis, commodo eu dolor. Phasellus aliquam rutrum ex in rutrum. Quisque dui felis, feugiat at mauris id, tempus iaculis enim. Nullam congue nibh ac mauris blandit, sit amet dignissim ex tincidunt. Donec eu eros eu est commodo condimentum. Quisque ex odio, cursus nec sollicitudin at, tristique sit amet dolor. Morbi eu rutrum purus. Praesent ex nisl, consectetur quis aliquam et, egestas eu massa. Donec vel enim dignissim, viverra dolor in, cursus felis. Sed at euismod turpis, vel viverra lacus. Nunc in eros ut sem convallis vehicula. Sed sed ultricies purus.
+            </p>
+
+            <a class="back" href="articles.html">← Back to articles</a>
+          </section>
+
+          <aside class="sidebar">
+            <div class="sidebox">
+              <h3>Article info</h3>
+              <ul>
+                <li>Category: Linux</li>
+                <li>Type: Guide</li>
+                <li>Status: Published</li>
+              </ul>
+            </div>
+
+          </aside>
+        </div>
+      </article>
+    </main>
+
+    <div class="footer">© Copyright Sleppy-af 2026</div>
+  </div>
+</body>
+</html>
